@@ -14,15 +14,14 @@ require 'humanize'
 #   config.access_token_secret = configatron.twitter_access_secret
 # end
 
+bot = Discordrb::Commands::CommandBot.new token: configatron.discord_token, client_id: 240239741784686592, prefix: '!'
+puts "------ This bot's invite URL is #{bot.invite_url}." # Make inviting the bot easy
 client = Twitter::REST::Client.new do |config|
   config.consumer_key        = 'FDM3jP4rWgAwUF1B4rjXMPXMr'
   config.consumer_secret     = configatron.twitter_consumer_secret
   config.access_token        = '791036085048528896-9s3L7qOaCuNP5oso7vNIJJRW4cPouQW'
   config.access_token_secret = configatron.twitter_access_secret
 end
-
-bot = Discordrb::Commands::CommandBot.new token: configatron.discord_token, client_id: 240239741784686592, prefix: '!'
-puts "------ This bot's invite URL is #{bot.invite_url}." # Make inviting the bot easy
 if store = YAML::Store.new('/Users/admin/Documents/TOM/Discord bot/store.yml')
   puts "------ Loaded YAML store"
 else
@@ -48,13 +47,14 @@ bot.command(:connect, help_available: false) do |event|
   nil
 end
 
-bot.command(:send_start_tweet, help_available:false, permission_level:1) do |event, episode, minutes|
+bot.command(:send_start_tweet, help_available:false, permission_level:1) do |event, episode, *args|
+  time = args.join(' ')
   if time.nil?
     client.update('We\'re about to start recording episode ' + episode + '! Come join us on Discord. https://www.patreon.com/posts/4374670')
     event.respond 'Okay, I just tweeted. Feel free to start whenever!'
   else
-    client.update('We\'re going to start recording episode ' + episode + ' in ' + minutes + ' minutes! Come join us on Discord. https://www.patreon.com/posts/4374670')
-    event.respond 'Okay, I just tweeted that you\'re going to start in ' + minutes + ' minutes.'
+    client.update('We\'re going to start recording episode ' + episode + ' in ' + time + '! Come join us on Discord. https://www.patreon.com/posts/4374670')
+    event.respond 'Okay, I just tweeted that you\'re going to start in ' + time + '.'
   end
 end
 
