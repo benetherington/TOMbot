@@ -4,6 +4,7 @@ require 'opus-ruby'
 require 'configatron'
 require_relative 'config.rb'
 require 'yaml/store'
+require 'humanize'
 
 # client = Twitter::REST::Client.new do |config|
 #   config.consumer_key        = 'EgFJvD2TP1iBF8sRQdIDoX79D'
@@ -62,6 +63,19 @@ end
 
 bot.command(:stop, description: 'Admins can stop playing music.') do |event|
   event.voice.stop_playing
+end
+
+
+bot.bucket(:mentions, limit: 1, time_span: 30)
+bot.command(:spx, bucket: :mentions, description: 'Increments the SpaceX mention counter for this episode. Admins can include a number to force-set the counter.') do |event, reset|
+  message = String.new
+  if reset.nil?
+    break unless event.user.id == 137947564317081600
+    store.transaction { store['spacex_counter'] += 1; message = store['spacex_counter']; store.commit }
+  else
+    store.transaction { store['spacex_counter'] = reset.to_i; message = store['spacex_counter']; store.commit }
+  end
+  event.respond message.humanize.capitalize + ' mentions of SpaceX so far.'
 end
 
 
