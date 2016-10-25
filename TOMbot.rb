@@ -32,27 +32,25 @@ bot.command(:connect) do |event|
   nil
 end
 
-bot.command :intro do |event|
+bot.command :music do |event, track|
   voicebot = event.voice
+  voicebot.length_override = 18
   # voicebot.adjust_average = true
   # voicebot.adjust_offset = 10
   # voicebot.adjust_interval = 10
-  voicebot.length_override = 18
 
-  voicebot.play_file('//Users/admin/Documents/TOM/Discord bot/Discord Music/Intro - Piano Wire.mp3')
-  # voicebot.play_io(open('https://static1.squarespace.com/static/5439a3d0e4b0dedc218f23b9/57f13835cd0f681fb4a20065/5803a4e4f5e23180413196a5/1476633849199/Intro+-+Piano+Wire.mp3'))
-end
-
-bot.command :questions do |event|
-  voicebot = event.voice
-  voicebot.length_override = 18
-  voicebot.play_file('//Users/admin/Documents/TOM/Discord bot/Discord Music/Qs Cs and CBs - Fifteen Fifty.mp3')
-end
-
-bot.command :outro do |event|
-  voicebot = event.voice
-  voicebot.length_override = 18
-  voicebot.play_file('//Users/admin/Documents/TOM/Discord bot/Discord Music/Outro - Piano Wire.mp3')
+  case track
+  when 'intro'
+    voicebot.play_file('//Users/admin/Documents/TOM/Discord bot/Discord Music/Intro - Piano Wire.mp3')
+  when 'questions'
+    voicebot.play_file('//Users/admin/Documents/TOM/Discord bot/Discord Music/Qs Cs and CBs - Fifteen Fifty.mp3')
+  when 'outro'
+    voicebot.play_file('//Users/admin/Documents/TOM/Discord bot/Discord Music/Outro - Piano Wire.mp3')
+  when 'stop'
+    event.voice.stop_playing
+  else
+    "Huh?"
+  end
 end
 
 bot.command :stop do |event|
