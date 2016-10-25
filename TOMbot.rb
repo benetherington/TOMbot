@@ -1,17 +1,25 @@
 require 'discordrb'
 require 'opus-ruby'
-# require 'twitter'
+require 'twitter'
 require 'configatron'
 require_relative 'config.rb'
 require 'yaml/store'
 require 'humanize'
 
+# Save the correct values for when I'm done testing the Twitter API.
 # client = Twitter::REST::Client.new do |config|
 #   config.consumer_key        = 'EgFJvD2TP1iBF8sRQdIDoX79D'
 #   config.consumer_secret     = configatron.twitter_consumer_secret
 #   config.access_token        = '2827032970-yz422D4giYmhx8VNnOwlAcivH8vFuGN2p8ZLUxa'
 #   config.access_token_secret = configatron.twitter_access_secret
 # end
+
+client = Twitter::REST::Client.new do |config|
+  config.consumer_key        = 'FDM3jP4rWgAwUF1B4rjXMPXMr'
+  config.consumer_secret     = configatron.twitter_consumer_secret
+  config.access_token        = '791036085048528896-9s3L7qOaCuNP5oso7vNIJJRW4cPouQW'
+  config.access_token_secret = configatron.twitter_access_secret
+end
 
 bot = Discordrb::Commands::CommandBot.new token: configatron.discord_token, client_id: 240239741784686592, prefix: '!'
 puts "------ This bot's invite URL is #{bot.invite_url}." # Make inviting the bot easy
@@ -24,23 +32,30 @@ bot.set_user_permission(137947564317081600, 1)
 
 bot.message(content: 'Ping!', description: 'Tests if the bot\'s awake') do |event|
   event.respond 'Pong!'
-  store.transaction do
-    store['tennis'] += 1
-    store.commit
-  end
+  store.transaction { store['tennis'] += 1; store.commit }
 end
 
-bot.command(:join, permission_level: 1, description: 'Admins can invite the bot to text channels. Takes an invite URL as an argument.') do |event, invite|
+bot.command(:join, permission_level: 1, help_available: false) do |event, invite|
   event.bot.join invite
   nil
 end
 
-bot.command(:connect, description: 'Admins can invite the bot to the voice channel they\'re in.') do |event|
+bot.command(:connect, help_available: false) do |event|
   channel = event.user.voice_channel
   next "You're not in any voice channel!" unless channel
   bot.voice_connect(channel)
   puts "------ Joined #{channel.name}!"
   nil
+end
+
+bot.command(:send_start_tweet, help_available:false, permission_level:1) do |event, episode, minutes|
+  if time.nil?
+    client.update('We\'re about to start recording episode ' + episode + '! Come join us on Discord. https://www.patreon.com/posts/4374670')
+    event.respond 'Okay, I just tweeted. Feel free to start whenever!'
+  else
+    client.update('We\'re going to start recording episode ' + episode + ' in ' + minutes + ' minutes! Come join us on Discord. https://www.patreon.com/posts/4374670')
+    event.respond 'Okay, I just tweeted that you\'re going to start in ' + minutes + ' minutes.'
+  end
 end
 
 bot.command(:music, permission_level: 1, description: 'Admins can play music. Takes a track name (intro, questions, outro, stop) as an argument.') do |event, track|
