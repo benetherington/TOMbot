@@ -21,7 +21,7 @@ else
 end
 bot.set_user_permission(137947564317081600, 1)
 
-bot.message(content: 'Ping!') do |event|
+bot.message(content: 'Ping!', description: 'Tests if the bot\'s awake') do |event|
   event.respond 'Pong!'
   store.transaction do
     store['tennis'] += 1
@@ -29,12 +29,12 @@ bot.message(content: 'Ping!') do |event|
   end
 end
 
-bot.command(:join, permission_level: 1, chain_usable: false) do |event, invite| # use "!join discord.gg/#######" to invite the bot to different text channels
+bot.command(:join, permission_level: 1, description: 'Admins can invite the bot to text channels. Takes an invite URL as an argument.') do |event, invite|
   event.bot.join invite
   nil
 end
 
-bot.command(:connect) do |event| # use "!conect" to have the bot connect to your current voice channel
+bot.command(:connect, description: 'Admins can invite the bot to the voice channel they\'re in.') do |event|
   channel = event.user.voice_channel
   next "You're not in any voice channel!" unless channel
   bot.voice_connect(channel)
@@ -42,7 +42,7 @@ bot.command(:connect) do |event| # use "!conect" to have the bot connect to your
   nil
 end
 
-bot.command(:music, permission_level: 1) do |event, track| # use "!music intro" etc. to play these local files
+bot.command(:music, permission_level: 1, description: 'Admins can play music. Takes a track name (intro, questions, outro, stop) as an argument.') do |event, track|
   voicebot = event.voice
   voicebot.length_override = 18
 
@@ -60,8 +60,15 @@ bot.command(:music, permission_level: 1) do |event, track| # use "!music intro" 
   end
 end
 
-bot.command :stop do |event| # use "!stop" to shut this thing up.
+bot.command(:stop, description: 'Admins can stop playing music.') do |event|
   event.voice.stop_playing
 end
 
+
 bot.run
+
+
+
+
+
+
