@@ -3,6 +3,7 @@ require 'opus-ruby'
 # require 'twitter'
 require 'configatron'
 require_relative 'config.rb'
+require 'yaml/store'
 
 # client = Twitter::REST::Client.new do |config|
 #   config.consumer_key        = 'EgFJvD2TP1iBF8sRQdIDoX79D'
@@ -12,32 +13,38 @@ require_relative 'config.rb'
 # end
 
 bot = Discordrb::Commands::CommandBot.new token: configatron.discord_token, client_id: 240239741784686592, prefix: '!'
-puts "This bot's invite URL is #{bot.invite_url}." # make invites easy
+puts "------ This bot's invite URL is #{bot.invite_url}." # Make inviting the bot easy
+if store = YAML::Store.new('/Users/admin/Documents/TOM/Discord bot/store.yml')
+  puts "------ Loaded YAML store"
+else
+  puts "-=-=-= YAML store load failed!!!"
+end
 bot.set_user_permission(137947564317081600, 1)
 
-bot.message(content: 'Ping!') do |event|           # make online testing easy
+bot.message(content: 'Ping!') do |event|
   event.respond 'Pong!'
+  store.transaction do
+    store['tennis'] += 1
+    store.commit
+  end
 end
 
-bot.command(:join, permission_level: 1, chain_usable: false) do |event, invite|
+bot.command(:join, permission_level: 1, chain_usable: false) do |event, invite| # use "!join discord.gg/#######" to invite the bot to different text channels
   event.bot.join invite
   nil
 end
 
-bot.command(:connect) do |event|
+bot.command(:connect) do |event| # use "!conect" to have the bot connect to your current voice channel
   channel = event.user.voice_channel
   next "You're not in any voice channel!" unless channel
-  puts "joining #{channel.name}"
   bot.voice_connect(channel)
+  puts "------ Joined #{channel.name}!"
   nil
 end
 
-bot.command :music do |event, track|
+bot.command(:music, permission_level: 1) do |event, track| # use "!music intro" etc. to play these local files
   voicebot = event.voice
   voicebot.length_override = 18
-  # voicebot.adjust_average = true
-  # voicebot.adjust_offset = 10
-  # voicebot.adjust_interval = 10
 
   case track
   when 'intro'
@@ -53,7 +60,7 @@ bot.command :music do |event, track|
   end
 end
 
-bot.command :stop do |event|
+bot.command :stop do |event| # use "!stop" to shut this thing up.
   event.voice.stop_playing
 end
 
