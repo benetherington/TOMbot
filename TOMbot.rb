@@ -67,17 +67,49 @@ end
 
 
 bot.bucket(:mentions, limit: 1, time_span: 30)
-bot.command(:spx, bucket: :mentions, description: 'Increments the SpaceX mention counter for this episode. Admins can include a number to force-set the counter.') do |event, reset|
-  message = String.new
-  if reset.nil?
-    break unless event.user.id == 137947564317081600
-    store.transaction { store['spacex_counter'] += 1; message = store['spacex_counter']; store.commit }
+bot.command(:spx, bucket: :mentions, description: 'Increments the SpaceX mention counter for this episode, with a 30 second cooldown. Admins can include a number to force-set the counter.') do |event, reset|
+
+  if reset.nil? # was a reset value specified? If not, increment.
+    store.transaction { store['spacex_counter'] += 1; store.commit }
   else
-    store.transaction { store['spacex_counter'] = reset.to_i; message = store['spacex_counter']; store.commit }
+    break unless event.user.id == 137947564317081600
+    store.transaction { store['spacex_counter'] = reset.to_i; store.commit }
   end
-  event.respond message.humanize.capitalize + ' mentions of SpaceX so far.'
+  
+  case store.transaction {store['spacex_counter']}
+  when 0
+    event.respond 'Resetting to zero.'
+  when 1
+    event.respond 'That\'s the first mention of SpaceX!'
+  else
+    event.respond store.transaction {store['spacex_counter']}.humanize.capitalize + ' mentions of SpaceX so far.'
+  end
 end
 
+bot.command(:goodbye_everyone, permission_level: 1, help_available: false) do |event|
+  event.respond 'That\'s the show for this week! Thanks for listening!'
+
+  if store.transaction {store['spacex_counter']} < 1
+    event.respond '🎉There were no mentions of SpaceX!🎉'
+    store.transaction { store['spacex_meta_counter'] += 1; store.commit }
+  elsif store.transaction {store['spacex_counter']} == 1
+    event.respond 'There was **one** mention of SpaceX this week.'
+    store.transaction { store['spacex_meta_counter'] = 0; store.commit }
+  else
+    event.respond 'There were **' + store.transaction {store['spacex_counter']}.humanize + '** mentions of SpaceX this week.'
+    store.transaction { store['spacex_meta_counter'] = 0; store.commit }
+  end
+
+  if store.transaction {store['spacex_meta_counter']} == 1
+    event.respond 'It\'s been **one** show since the last SpaceX mention incident.'
+  else
+    event.respond 'It\'s been **' + store.transaction {store['spacex_meta_counter']}.humanize + '** shows since the last SpaceX mention incident.'
+  end
+
+  store.transaction { store['spacex_counter'] = 0; store.commit }
+
+  exit
+end
 
 bot.run
 
