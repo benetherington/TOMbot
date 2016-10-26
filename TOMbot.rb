@@ -116,6 +116,7 @@ bot.command(:quote, description: 'Serves a random quote. Call with text to save 
   end
 end
 
+levels = [ 1000, 3000, 10000, 20000, 50000, 100000 ]
 
 bot.message(description: 'It\'s a gameification of the normal chatting you do!') do |event|
   if store.transaction { store['altitude'][event.user.id] }
@@ -123,6 +124,19 @@ bot.message(description: 'It\'s a gameification of the normal chatting you do!')
   else
     store.transaction { store['altitude'][event.user.id] = 15+rand(10); store.commit } # because remember you can't increment 0.
   end
+end
+
+bot.command(:altitude, description: 'Check a user\'s score in the chat level-up game. Leave blank to check your own score.' ) do |event|
+
+  if store.transaction { store['altitude'][event.user.id] }
+    current_level = levels.count { |level| store.transaction {store['altitude'][event.user.id]} > level }
+    if current_level > 0
+      event.respond 'You\'re at **' + current_level.to_s + ',000 km**.'
+    else
+      event.respond 'You\'re still on the ground, young aviator.'
+    end
+  end
+
 end
 
 
