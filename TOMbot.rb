@@ -16,11 +16,15 @@ require 'humanize'
 
 bot = Discordrb::Commands::CommandBot.new token: configatron.discord_token, client_id: 240239741784686592, prefix: '!'
 puts "------ This bot's invite URL is #{bot.invite_url}." # Make inviting the bot easy
-client = Twitter::REST::Client.new do |config|
-  config.consumer_key        = 'FDM3jP4rWgAwUF1B4rjXMPXMr'
-  config.consumer_secret     = configatron.twitter_consumer_secret
-  config.access_token        = '791036085048528896-9s3L7qOaCuNP5oso7vNIJJRW4cPouQW'
-  config.access_token_secret = configatron.twitter_access_secret
+if        client = Twitter::REST::Client.new do |config|
+          config.consumer_key        = 'FDM3jP4rWgAwUF1B4rjXMPXMr'
+          config.consumer_secret     = configatron.twitter_consumer_secret
+          config.access_token        = '791036085048528896-9s3L7qOaCuNP5oso7vNIJJRW4cPouQW'
+          config.access_token_secret = configatron.twitter_access_secret
+          end
+  puts "------ Authenticated Twitter" + client.current_user.name
+else
+  puts "-=-=-= Twitter authentication failed!!!"
 end
 if store = YAML::Store.new('/Users/admin/Documents/TOM/Discord bot/store.yml')
   puts "------ Loaded YAML store"
@@ -101,7 +105,7 @@ bot.command(:spx, bucket: :mentions, description: 'Increments the SpaceX mention
   end
 end
 
-
+# TODO: set up initializing condition
 bot.command(:quote, description: 'Serves a random quote. Call with text to save a new quote.') do |event, *args|
   unless args.empty?
     quote = args.join(' ')
@@ -112,6 +116,14 @@ bot.command(:quote, description: 'Serves a random quote. Call with text to save 
   end
 end
 
+
+bot.message(description: 'It\'s a gameification of the normal chatting you do!') do |event|
+  if store.transaction { store['altitude'][event.user.id] }
+    store.transaction { store['altitude'][event.user.id] += 15+rand(10); store.commit }
+  else
+    store.transaction { store['altitude'][event.user.id] = 15+rand(10); store.commit } # because remember you can't increment 0.
+  end
+end
 
 
 bot.command(:goodbye_everyone, permission_level: 1, help_available: false) do |event|
