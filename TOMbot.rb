@@ -8,6 +8,7 @@ require 'humanize'
 require_relative 'config.rb'
 require_relative 'utilities.rb'
 require_relative 'crewtools.rb'
+require_relative 'AudienceToys.rb'
 
 # Save the correct values for when I'm done testing the Twitter API.
 # client = Twitter::REST::Client.new do |config|
