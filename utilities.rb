@@ -1,3 +1,5 @@
+store = YAML::Store.new('/Users/admin/Documents/TOM/Discord bot/store.yml')
+
 module Utilities
   extend Discordrb::EventContainer
   extend Discordrb::Commands::CommandContainer

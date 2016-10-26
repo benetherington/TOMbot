@@ -1,6 +1,12 @@
 module AudienceToys
   extend Discordrb::EventContainer
   extend Discordrb::Commands::CommandContainer
+  
+  if store = YAML::Store.new('/Users/admin/Documents/TOM/Discord bot/store.yml')
+    puts "------ Loaded YAML store"
+  else
+    puts "-=-=-= YAML store load failed!!!"
+  end
 
 
   command(:spx, bucket: :mentions, description: 'Increments the SpaceX mention counter for this episode, with a 30 second cooldown. Admins can include a number to force-set the counter.') do |event, reset|
