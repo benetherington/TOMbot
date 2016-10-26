@@ -101,6 +101,19 @@ bot.command(:spx, bucket: :mentions, description: 'Increments the SpaceX mention
   end
 end
 
+
+bot.command(:quote, description: 'Serves a random quote. Call with text to save a new quote.') do |event, *args|
+  unless args.empty?
+    quote = args.join(' ')
+    store.transaction {store['quotes'] << quote; store.commit}
+    event.respond "There are now " + store.transaction {store['quotes'].count}.humanize + " quotes stored."
+  else
+    event.respond store.transaction {store['quotes'].sample}
+  end
+end
+
+
+
 bot.command(:goodbye_everyone, permission_level: 1, help_available: false) do |event|
   event.respond 'That\'s the show for this week! Thanks for listening!'
 
