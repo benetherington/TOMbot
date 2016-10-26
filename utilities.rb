@@ -20,4 +20,12 @@ module Utilities
     puts "------ Joined #{channel.name}!"
     nil
   end
+
+  command([:about, :info], description: 'Get more info about TOMbot.') do |event|
+    event.respond 'Author: <@137947564317081600>'
+    event.respond 'ben@theorbitalmechanics.com'
+    event.respond 'http://github.com/benetherington'
+    event.respond 'Type `!help` for more commands.'
+  end
+
 end
