@@ -7,7 +7,7 @@ module AudienceToys
   else
     puts "-=-=-= YAML store load failed!!!"
   end
-
+  levels = [ 1000, 3000, 10000, 20000, 50000, 100000 ]
 
   command(:spx, bucket: :mentions, description: 'Increments the SpaceX mention counter for this episode, with a 30 second cooldown. Admins can include a number to force-set the counter.') do |event, reset|
 

@@ -30,16 +30,10 @@ if        client = Twitter::REST::Client.new do |config|
 else
   puts "-=-=-= Twitter authentication failed!!!"
 end
-if store = YAML::Store.new('/Users/admin/Documents/TOM/Discord bot/store.yml')
-  puts "------ Loaded YAML store"
-else
-  puts "-=-=-= YAML store load failed!!!"
-end
 bot.set_user_permission(137947564317081600, 1)
 
 
 bot.bucket(:mentions, limit: 1, time_span: 30)
-levels = [ 1000, 3000, 10000, 20000, 50000, 100000 ]
 
 
 
