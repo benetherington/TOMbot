@@ -13,28 +13,6 @@ module CrewTools
     end
   end
 
-  command(:music, permission_level: 1, description: 'Admins can play music. Takes a track name (intro, questions, outro, stop) as an argument.') do |event, track|
-    voicebot = event.voice
-    voicebot.length_override = 18
-
-    case track
-    when 'intro'
-      voicebot.play_file('//Users/admin/Documents/TOM/Discord bot/Discord Music/Intro - Piano Wire.mp3')
-    when 'questions'
-      voicebot.play_file('//Users/admin/Documents/TOM/Discord bot/Discord Music/Qs Cs and CBs - Fifteen Fifty.mp3')
-    when 'outro'
-      voicebot.play_file('//Users/admin/Documents/TOM/Discord bot/Discord Music/Outro - Piano Wire.mp3')
-    when 'stop'
-      event.voice.stop_playing
-    else
-      "Huh?"
-    end
-  end
-
-  command(:stop, description: 'Admins can stop playing music.') do |event|
-    event.voice.stop_playing
-  end
-
   command(:goodbye_everyone, permission_level: 1, help_available: false) do |event|
     event.respond 'That\'s the show for this week! Thanks for listening!'
 
@@ -62,3 +40,6 @@ module CrewTools
 
 
 end
+puts "------ Loaded CrewTools module"
+
+
