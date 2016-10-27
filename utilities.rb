@@ -5,7 +5,6 @@ module Utilities
 
   message(content: 'Ping!', description: 'Tests if the bot\'s awake') do |event|
     event.respond 'Pong!'
-    store.transaction { store['tennis'] += 1; store.commit }
   end
 
   command(:join, permission_level: 1, help_available: false) do |event, invite|
@@ -16,7 +15,7 @@ module Utilities
   command(:connect, help_available: false) do |event|
     channel = event.user.voice_channel
     next "You're not in any voice channel!" unless channel
-    bot.voice_connect(channel)
+    event.bot.voice_connect(channel)
     puts "------ Joined #{channel.name}!"
     nil
   end
@@ -25,7 +24,11 @@ module Utilities
     event.respond 'Author: <@137947564317081600>'
     event.respond 'ben@theorbitalmechanics.com'
     event.respond 'http://github.com/benetherington'
+    event.respond 'Big thanks to Meew0 for writing https://github.com/meew0/discordrb.'
+    event.respond 'Thanks to PoVa for code examples. https://github.com/PoVa/sapphire_bot'
     event.respond 'Type `!help` for more commands.'
   end
 
 end
+
+puts "------ Loaded Utilities module"

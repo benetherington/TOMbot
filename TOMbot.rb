@@ -8,7 +8,9 @@ require 'humanize'
 require_relative 'config.rb'
 require_relative 'utilities.rb'
 require_relative 'crewtools.rb'
-require_relative 'AudienceToys.rb'
+require_relative 'audiencetoys.rb'
+require_relative 'music.rb'
+# require_relative 'trial.rb'
 
 # Save the correct values for when I'm done testing the Twitter API.
 # client = Twitter::REST::Client.new do |config|
@@ -40,6 +42,8 @@ bot.bucket(:mentions, limit: 1, time_span: 30)
 bot.include! Utilities
 bot.include! CrewTools
 bot.include! AudienceToys
+bot.include! Music
+# bot.include! Trial
 bot.run
 
 
