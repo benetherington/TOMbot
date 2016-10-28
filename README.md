@@ -3,7 +3,7 @@ Look, we all share a favorite pasttime of finding a good musicbot for our podcas
 
 ## Thanks to
 
-First, to Meew0 for writing the [DiscordRB library](https://github.com/meew0/discordrb.). Next, thanks to PoVa for [code examples](https://github.com/PoVa/sapphire_bot).
+First, to Meew0 for writing the [DiscordRB library](https://github.com/meew0/discordrb.). Next, thanks to PoVa for [code examples](https://github.com/PoVa/sapphire_bot). Also thanks to [some StackOverflow user named Max for an inspired refactoring to a really dumb bit of code I came up with](http://stackoverflow.com/questions/40292828/is-there-a-good-way-to-pass-array-addresses-to-a-method)
 
 ## Dependencies
 
