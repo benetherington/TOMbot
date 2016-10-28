@@ -32,12 +32,10 @@ if        client = Twitter::REST::Client.new do |config|
 else
   puts "-=-=-= Twitter authentication failed!!!"
 end
-bot.set_user_permission(137947564317081600, 1)
 
 
+bot.set_role_permission(137953295498084363, 1) # set TOMcrew to permission 1.
 bot.bucket(:mentions, limit: 1, time_span: 30)
-
-
 
 bot.include! Utilities
 bot.include! CrewTools
@@ -45,9 +43,5 @@ bot.include! AudienceToys
 bot.include! Music
 # bot.include! Trial
 bot.run
-
-
-
-
 
 
