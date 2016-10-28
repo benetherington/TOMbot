@@ -3,9 +3,9 @@ module AudienceToys
   extend Discordrb::Commands::CommandContainer
   
   if @store = YAML::Store.new('/Users/admin/Documents/TOM/Discord bot/store.yml')
-    puts "------ Loaded YAML store"
+    puts "------ Loaded YAML store to AudienceToys"
   else
-    puts "-=-=-= YAML store load failed!!!"
+    puts "-=-=-= YAML store load to AudienceToys failed!!!"
   end
   
 
