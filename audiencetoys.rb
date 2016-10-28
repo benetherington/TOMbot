@@ -7,9 +7,10 @@ module AudienceToys
   else
     puts "-=-=-= YAML store load failed!!!"
   end
-  levels = [ 1000, 3000, 10000, 20000, 50000, 100000 ]
+  
 
-
+  @levels = [155, 220, 295, 380, 475, 580, 695, 820, 955, 1100, 1255, 1420, 1595, 1780, 1975, 2180, 2395, 2620, 2855, 3100, 3355, 3620, 3895, 4180, 4475, 4780, 5095, 5420, 5755, 6100, 6455, 6820, 7195, 7580, 7975, 8380, 8795, 9220, 9655, 10100, 10555, 11020, 11495, 11980, 12475, 12980, 13495, 14020, 14555, 15100, 15655, 16220, 16795, 17380, 17975, 18580, 19195, 19820, 20455, 21100, 21755, 22420, 23095, 23780, 24475, 25180, 25895, 26620, 27355, 28100, 28855, 29620, 30395, 31180, 31975, 32780, 33595, 34420, 35255, 36100, 36955, 37820, 38695, 39580, 40475, 41380, 42295, 43220, 44155, 45100, 46055, 47020, 47995, 48980, 49975, 50980, 51995, 53020, 54055]
+  # 5*(n**2)+50*n+100
 
   command(:spx, bucket: :mentions, description: 'Increments the SpaceX mention counter for this episode, with a 30 second cooldown. Admins can include a number to force-set the counter.') do |event, reset|
 
@@ -44,18 +45,18 @@ module AudienceToys
   end
 
   message(description: 'It\'s a gameification of the normal chatting you do!') do |event|
-    if get_nested_transaction( 'altitude', event.user.id )
-      increment_nested_transaction 'altitude', event.user.id, 15
-    else
-      set_transaction ['altitude'][event.user.id], 15+rand(10) # because remember you can't increment 0.
+    new_xp = 15+rand(10)
+
+    if check_for_level_up(event.user.id, new_xp)
+      event.respond 'You just hit an altitude of **' + (current_level(event.user.id) + 1).to_s + ',000 km!**'
     end
+    award_xp(event.user.id, new_xp)
   end
 
   command(:altitude, description: 'Check a user\'s score in the chat level-up game. Leave blank to check your own score.' ) do |event|
     if get_nested_transaction('altitude', event.user.id)
-      current_level = levels.count { |level| get_nested_transaction('altitude', event.user.id) > level }
-      if current_level > 0
-        event.respond 'You\'re at **' + current_level.to_s + ',000 km**.'
+      if current_level(event.user.id) > 0
+        event.respond 'You\'re at **' + current_level(event.user.id).to_s + ',000 km**.'
       else
         event.respond 'You\'re still on the ground, young aviator.'
       end
@@ -64,7 +65,28 @@ module AudienceToys
 
 
 
+
 private
+
+  def self.current_level(user)
+    @levels.count { |level| get_nested_transaction('altitude', user) > level }
+  end
+
+  def self.award_xp(user, xp)
+    if get_nested_transaction( 'altitude', user )
+      increment_nested_transaction( 'altitude', user, xp )
+    else
+      set_nested_transaction('altitude', user, xp) # because remember you can't increment 0.
+    end
+  end
+
+  def self.check_for_level_up(user, xp)
+    if @levels.count { |level| get_nested_transaction('altitude', user) > level } != @levels.count { |level| get_nested_transaction('altitude', user)+xp > level }
+      return true
+    else
+      return false
+    end
+  end
 
   def self.get_transaction(key)
     @store.transaction { @store[key] }
@@ -93,8 +115,6 @@ private
 
 end
 puts "------ Loaded AudienceToys module"
-
-
 
 
 
