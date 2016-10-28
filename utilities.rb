@@ -12,7 +12,7 @@ module Utilities
     nil
   end
 
-  command(:connect, help_available: false) do |event|
+  command(:connect, permission_level: 1, help_availble: false) do |event|
     channel = event.user.voice_channel
     next "You're not in any voice channel!" unless channel
     event.bot.voice_connect(channel)
