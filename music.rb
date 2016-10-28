@@ -2,6 +2,12 @@ module Music
   extend Discordrb::Commands::CommandContainer
 
   command(:music, permission_level: 1, help_availble: false) do |event, track|
+
+    unless defined?(event.voice.length_override)
+      event.user.pm('Use !connect before trying to play music, dummy.')
+      break
+    end
+    
     event.voice.length_override = 18
 
     case track
@@ -18,19 +24,19 @@ module Music
     end
   end
 
-  command(:volume) do |event, volume|
+  command(:volume, permission_level: 1, help_availble: false) do |event, volume|
     event.voice.volume = volume
   end
 
-  command(:crescendo) do |event|
-    for level in 1..10
-      event.voice.volume = level/10
-      puts level
-      sleep(0.3)
-    end
-  end
+  # command(:crescendo) do |event|
+  #   for level in 1..10
+  #     event.voice.volume = level/10
+  #     puts level
+  #     sleep(0.3 )
+  #   end
+  # end
 
-  command(:stop, help_availble: false) do |event|
+  command(:stop, permission_level: 1, help_availble: false) do |event|
     event.voice.stop_playing
   end
 
