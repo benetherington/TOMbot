@@ -4,7 +4,7 @@ module Utilities
 
 
   message(content: 'Ping!', description: 'Tests if the bot\'s awake') do |event|
-    event.respond 'Pong!'
+    event << 'Pong!'
   end
 
   command(:join, permission_level: 1, help_available: false) do |event, invite|
@@ -21,12 +21,12 @@ module Utilities
   end
 
   command([:about, :info], description: 'Get more info about TOMbot.') do |event|
-    event.respond 'Author: <@137947564317081600>'
-    event.respond 'ben@theorbitalmechanics.com'
-    event.respond 'http://github.com/benetherington'
-    event.respond 'Big thanks to Meew0 for writing https://github.com/meew0/discordrb.'
-    event.respond 'Thanks to PoVa for code examples. https://github.com/PoVa/sapphire_bot'
-    event.respond 'Type `!help` for more commands.'
+    event << 'Author: <@137947564317081600>'
+    event << 'ben@theorbitalmechanics.com'
+    event << 'http://github.com/benetherington'
+    event << 'Big thanks to Meew0 for writing https://github.com/meew0/discordrb.'
+    event << 'Thanks to PoVa for code examples. https://github.com/PoVa/sapphire_bot'
+    event << 'Type `!help` for more commands.'
   end
 
 end

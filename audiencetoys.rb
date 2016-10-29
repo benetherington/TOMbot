@@ -41,9 +41,9 @@ rate_limiter.bucket :mentions, delay: 30
     if !args.empty?
       quote = args.join(' ')
       append_array_transaction 'quotes', quote;
-      event.respond "There are now **" + get_transaction('quotes').count.humanize + "** quotes stored."
+      event << "There are now **" + get_transaction('quotes').count.humanize + "** quotes stored." #TODO fix language for one quote
     elsif get_transaction('quotes').length > 0
-      event.respond get_transaction('quotes').sample
+      event << get_transaction('quotes').sample
     end
   
   end
@@ -59,10 +59,10 @@ rate_limiter.bucket :mentions, delay: 30
       suggestion.prepend('**' + event.user.name + "** suggested: ")
       append_array_transaction 'titles', suggestion
     else
-      if get_transaction('titles').length = 1
-        event.respond '**One** title suggestion so far.'
+      if get_transaction('titles').length == 1
+        event << '**One** title suggestion so far.'
       else
-        event.respond '**' + get_transaction('titles').length.humanize.capitalize + '** title suggestions so far.'
+        event << '**' + get_transaction('titles').length.humanize.capitalize + '** title suggestions so far.'
       end
     end
   
@@ -73,7 +73,7 @@ rate_limiter.bucket :mentions, delay: 30
     new_xp = 15+rand(10)
 
     if check_for_level_up(event.user.id, new_xp) && not_tom_crew?(event)
-      event.respond '<@' + event.user.id.to_s + '> just hit an altitude of **' + (current_level(event.user.id) + 1).to_s + ',000 km!**'
+      event << '<@' + event.user.id.to_s + '> just hit an altitude of **' + (current_level(event.user.id) + 1).to_s + ',000 km!**'
     end
 
     award_xp(event.user.id, new_xp)
@@ -82,9 +82,9 @@ rate_limiter.bucket :mentions, delay: 30
   command(:altitude, description: 'You gain random XP for every minute you\'re active in the chat. Use this command to check your current level.' ) do |event|
     if get_nested_transaction('altitude', event.user.id)
       if current_level(event.user.id) > 0
-        event.respond 'You\'re at **' + current_level(event.user.id).to_s + ',000 km**, <@' + event.user.id.to_s + '>.'
+        event << 'You\'re at **' + current_level(event.user.id).to_s + ',000 km**, <@' + event.user.id.to_s + '>.'
       else
-        event.respond 'You\'re still on the ground, young aviator.'
+        event << 'You\'re still on the ground, young aviator.'
       end
     end
   end
@@ -117,11 +117,11 @@ private
   def self.announce_mentions(event)
     case get_transaction 'spacex_counter'
     when 0
-      event.respond 'Resetting to zero.'
+      event << 'Resetting to zero.'
     when 1
-      event.respond 'That\'s the first mention of SpaceX!'
+      event << 'That\'s the first mention of SpaceX!'
     else
-      event.respond get_transaction('spacex_counter').humanize.capitalize + ' mentions of SpaceX so far.'
+      event << get_transaction('spacex_counter').humanize.capitalize + ' mentions of SpaceX so far.'
     end
   end
 

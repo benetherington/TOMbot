@@ -12,10 +12,10 @@ module CrewTools
     time = args.join(' ')
     if time.nil?
       client.update('We\'re about to start recording episode ' + episode + '! Come join us on Discord. https://www.patreon.com/posts/4374670')
-      event.respond 'Okay, I just tweeted. Feel free to start whenever!'
+      event << 'Okay, I just tweeted. Feel free to start whenever!'
     else
       client.update('We\'re going to start recording episode ' + episode + ' in ' + time + '! Come join us on Discord. https://www.patreon.com/posts/4374670')
-      event.respond 'Okay, I just tweeted that you\'re going to start in ' + time + '.'
+      event <<  'Okay, I just tweeted that you\'re going to start in ' + time + '.'
     end
   end
 
@@ -32,33 +32,41 @@ module CrewTools
   end
 
   command(:goodbye_everyone, permission_level: 1, help_available: false) do |event|
-    event.respond 'That\'s the show for this week! Thanks for listening!'
+    event << 'That\'s the show for this week! Thanks for listening!'
+    event << ''
 
     if get_transaction('spacex_counter') < 1
-      event.respond '🎉There were no mentions of SpaceX!🎉'
+      event << '🎉There were no mentions of SpaceX!🎉'
+      event << ''
       increment_transaction('spacex_meta_counter', 1)
     elsif get_transaction('spacex_counter') == 1
-      event.respond 'There was **one** mention of SpaceX this week.'
+      event <<  'There was **one** mention of SpaceX this week.'
+      event << ''
       set_transaction 'spacex_meta_counter', 0
     else
-      event.respond 'There were **' + get_transaction('spacex_counter').humanize + '** mentions of SpaceX this week.'
+      event <<  'There were **' + get_transaction('spacex_counter').humanize + '** mentions of SpaceX this week.'
+      event << ''
       set_transaction 'spacex_meta_counter', 0
     end
 
     if get_transaction('spacex_meta_counter') == 1
-      event.respond 'It\'s been **one** show since the last SpaceX mention incident.'
+      event <<  'It\'s been **one** show since the last SpaceX mention incident.'
+      event << ''
     else
-      event.respond 'It\'s been **' + get_transaction('spacex_meta_counter').humanize + '** shows since the last SpaceX mention incident.'
+      event << 'It\'s been **' + get_transaction('spacex_meta_counter').humanize + '** shows since the last SpaceX mention incident.'
+      event << ''
     end
 
     if get_transaction('titles') == nil || get_transaction('titles').length <= 0
-      event.respond 'There wasn\'t a single title suggestion. Guess you\'re on your own this week, Ben.'
+      event <<  'There wasn\'t a single title suggestion. Guess you\'re on your own this week, Ben.'
     elsif get_transaction('titles').length > 1
-      event.respond 'There were **' + get_transaction('titles').length.humanize + '** title suggestions:'
-      get_transaction('titles').each {|t| event.respond t }
+      event << 'There were **' + get_transaction('titles').length.humanize + '** title suggestions:'
+      event << ''
+      get_transaction('titles').each {|t| event << t}
     else
-      event.respond 'There was **just one** title suggestion:'
-      event.respond get_transaction('titles')
+      event << 'There was **just one** title suggestion:'
+      event << ''
+      event << get_transaction('titles')
     end
 
     set_transaction 'spacex_counter', 0 #reset for next show
