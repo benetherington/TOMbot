@@ -51,9 +51,20 @@ module CrewTools
       event.respond 'It\'s been **' + get_transaction('spacex_meta_counter').humanize + '** shows since the last SpaceX mention incident.'
     end
 
-    set_transaction 'spacex_counter', 0 #reset for next show
+    if get_transaction('titles') == nil || get_transaction('titles').length <= 0
+      event.respond 'There wasn\'t a single title suggestion. Guess you\'re on your own this week, Ben.'
+    elsif get_transaction('titles').length > 1
+      event.respond 'There were **' + get_transaction('titles').length.humanize + '** title suggestions:'
+      get_transaction('titles').each {|t| event.respond t }
+    else
+      event.respond 'There was **just one** title suggestion:'
+      event.respond get_transaction('titles')
+    end
 
-    #TODO: disconnect from channel.
+    set_transaction 'spacex_counter', 0 #reset for next show
+    set_transaction 'titles', []
+
+    #TODO: disconnect from server.
     exit
   end
 
