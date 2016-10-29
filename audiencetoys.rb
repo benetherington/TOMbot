@@ -43,7 +43,24 @@ rate_limiter.bucket :mentions, delay: 30
     end
   end
 
-#TODO: title suggestion
+  command(:title, description: 'Naming episodes is hard. Suggest them as we go along, and I\'ll summarize at the end of the show!') do |event, *args|
+    
+    if get_transaction('titles') == nil
+      set_transaction 'titles', []
+    end
+
+    unless args.empty?
+      suggestion = args.join(' ')
+      suggestion.prepend('**' + event.user.name + "** suggested: ")
+      append_array_transaction 'titles', suggestion
+    else
+      if get_transaction('titles').length = 1
+        event.respond '**One** title suggestion so far.'
+      else
+        event.respond '**' + get_transaction('titles').length.humanize.capitalize + '** title suggestions so far.'
+    end
+  end
+
 
   message(bucket: :altitude_game) do |event| #user leveling game
     new_xp = 15+rand(10)
@@ -121,6 +138,10 @@ private
 
   def self.set_nested_transaction(key, sub, value)
     @store.transaction { @store[key][sub] = value }
+  end
+
+  def self.append_array_transaction(key, value)
+    @store.transaction { @store[key] << value; @store.commit }
   end
 
   def self.increment_transaction(key, value)
