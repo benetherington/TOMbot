@@ -36,6 +36,7 @@ end
 
 bot.set_role_permission(137953295498084363, 1) # set TOMcrew to permission 1.
 bot.bucket(:mentions, limit: 1, time_span: 30)
+bot.bucket(:altitude_game, limit: 1, time_span: 60)
 
 bot.include! Utilities
 bot.include! CrewTools

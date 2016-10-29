@@ -44,7 +44,9 @@ module AudienceToys
     end
   end
 
-  message(description: 'It\'s a gameification of the normal chatting you do!') do |event|
+#TODO: title suggestion
+
+  message(bucket: :altitude_game) do |event|
     new_xp = 15+rand(10)
 
     if check_for_level_up(event.user.id, new_xp)
@@ -53,7 +55,7 @@ module AudienceToys
     award_xp(event.user.id, new_xp)
   end
 
-  command(:altitude, description: 'Check a user\'s score in the chat level-up game. Leave blank to check your own score.' ) do |event|
+  command(:altitude, description: 'You gain random XP for every minute you\'re active in the chat. Use this command to check your current level.' ) do |event|
     if get_nested_transaction('altitude', event.user.id)
       if current_level(event.user.id) > 0
         event.respond 'You\'re at **' + current_level(event.user.id).to_s + ',000 km**.'
