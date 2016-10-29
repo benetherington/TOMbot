@@ -12,23 +12,22 @@ module AudienceToys
   @levels = [155, 220, 295, 380, 475, 580, 695, 820, 955, 1100, 1255, 1420, 1595, 1780, 1975, 2180, 2395, 2620, 2855, 3100, 3355, 3620, 3895, 4180, 4475, 4780, 5095, 5420, 5755, 6100, 6455, 6820, 7195, 7580, 7975, 8380, 8795, 9220, 9655, 10100, 10555, 11020, 11495, 11980, 12475, 12980, 13495, 14020, 14555, 15100, 15655, 16220, 16795, 17380, 17975, 18580, 19195, 19820, 20455, 21100, 21755, 22420, 23095, 23780, 24475, 25180, 25895, 26620, 27355, 28100, 28855, 29620, 30395, 31180, 31975, 32780, 33595, 34420, 35255, 36100, 36955, 37820, 38695, 39580, 40475, 41380, 42295, 43220, 44155, 45100, 46055, 47020, 47995, 48980, 49975, 50980, 51995, 53020, 54055]
   # 5*(n**2)+50*n+100
 
-  command(:spx, bucket: :mentions, description: 'Increments the SpaceX mention counter for this episode, with a 30 second cooldown. Admins can include a number to force-set the counter.') do |event, reset|
+rate_limiter = Discordrb::Commands::SimpleRateLimiter.new
+rate_limiter.bucket :mentions, delay: 30 
+
+
+  command(:spx, description: 'Increments the SpaceX mention counter for this episode, with a 30 second cooldown. Admins can include a number to force-set the counter.') do |event, reset|
 
     if reset.nil? # was a reset value specified? If not, increment.
+      break if rate_limiter.rate_limited?(:mentions, event.channel)
       increment_transaction 'spacex_counter', 1
+      announce_mentions(event)
     else          # If so, reset.
       break unless event.user.id == 137947564317081600
       set_transaction 'spacex_counter', reset.to_i
+      announce_mentions(event)
     end
-    
-    case get_transaction 'spacex_counter'
-    when 0
-      event.respond 'Resetting to zero.'
-    when 1
-      event.respond 'That\'s the first mention of SpaceX!'
-    else
-      event.respond get_transaction('spacex_counter').humanize.capitalize + ' mentions of SpaceX so far.'
-    end
+
   end
 
 
@@ -46,12 +45,13 @@ module AudienceToys
 
 #TODO: title suggestion
 
-  message(bucket: :altitude_game) do |event|
+  message(bucket: :altitude_game) do |event| #user leveling game
     new_xp = 15+rand(10)
 
-    if check_for_level_up(event.user.id, new_xp)
+    if check_for_level_up(event.user.id, new_xp) && not_tom_crew?(event)
       event.respond 'You just hit an altitude of **' + (current_level(event.user.id) + 1).to_s + ',000 km!**'
     end
+
     award_xp(event.user.id, new_xp)
   end
 
@@ -89,6 +89,23 @@ private
       return false
     end
   end
+
+  def self.announce_mentions(event)
+    case get_transaction 'spacex_counter'
+    when 0
+      event.respond 'Resetting to zero.'
+    when 1
+      event.respond 'That\'s the first mention of SpaceX!'
+    else
+      event.respond get_transaction('spacex_counter').humanize.capitalize + ' mentions of SpaceX so far.'
+    end
+  end
+
+  def self.not_tom_crew?(event)
+    !event.user.roles.include? event.server.role(137953295498084363)
+  end
+
+
 
   def self.get_transaction(key)
     @store.transaction { @store[key] }
