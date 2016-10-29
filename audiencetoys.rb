@@ -32,15 +32,20 @@ rate_limiter.bucket :mentions, delay: 30
 
 
 
-  # TODO: set up initializing condition
   command(:quote, description: 'Serves a random quote. Call with text to save a new quote.') do |event, *args|
-    unless args.empty?
+
+    if get_transaction('quotes') == nil
+      set_transaction 'quotes', []
+    end
+
+    if !args.empty?
       quote = args.join(' ')
-      @store.transaction {@store['quotes'] << quote; @store.commit}
-      event.respond "There are now " + @store.transaction {@store['quotes'].count}.humanize + " quotes stored."
-    else
+      append_array_transaction 'quotes', quote;
+      event.respond "There are now **" + get_transaction('quotes').count.humanize + "** quotes stored."
+    elsif get_transaction('quotes').length > 0
       event.respond get_transaction('quotes').sample
     end
+  
   end
 
   command(:title, description: 'Naming episodes is hard. Suggest them as we go along, and I\'ll summarize at the end of the show!') do |event, *args|
@@ -58,7 +63,9 @@ rate_limiter.bucket :mentions, delay: 30
         event.respond '**One** title suggestion so far.'
       else
         event.respond '**' + get_transaction('titles').length.humanize.capitalize + '** title suggestions so far.'
+      end
     end
+  
   end
 
 
