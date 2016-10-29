@@ -73,7 +73,7 @@ rate_limiter.bucket :mentions, delay: 30
     new_xp = 15+rand(10)
 
     if check_for_level_up(event.user.id, new_xp) && not_tom_crew?(event)
-      event.respond 'You just hit an altitude of **' + (current_level(event.user.id) + 1).to_s + ',000 km!**'
+      event.respond '<@' + event.user.id.to_s + '> just hit an altitude of **' + (current_level(event.user.id) + 1).to_s + ',000 km!**'
     end
 
     award_xp(event.user.id, new_xp)
@@ -82,7 +82,7 @@ rate_limiter.bucket :mentions, delay: 30
   command(:altitude, description: 'You gain random XP for every minute you\'re active in the chat. Use this command to check your current level.' ) do |event|
     if get_nested_transaction('altitude', event.user.id)
       if current_level(event.user.id) > 0
-        event.respond 'You\'re at **' + current_level(event.user.id).to_s + ',000 km**.'
+        event.respond 'You\'re at **' + current_level(event.user.id).to_s + ',000 km**, <@' + event.user.id.to_s + '>.'
       else
         event.respond 'You\'re still on the ground, young aviator.'
       end
