@@ -19,6 +19,18 @@ module CrewTools
     end
   end
 
+  command(:hello_everyone, permission_level:1, help_available: false) do |event|
+    event << 'Welcome to the show! I\'m **Jukebox**. I play music, help out the TOM crew and play games with the listners. Type `!help` for more info.'
+    event << ''
+    event << 'Please be on the lookout for good show titles, and submit them by saying `!title insert title here`.'
+    event << ''
+    event << 'I can remember quotes from the show or chatroom. Submit them by saying `!quote insert quote here`.'
+    event << ''
+    event << 'I\'m always playing a game called **Altitude**. You gain altitude every minute you\'re active in the chat. Say `!altitude` to see how high you are.'
+    event << ''
+    event << 'David and Ben talk about SpaceX a lot, but are trying to have more varied discussion topics. Let me know when they mention SpaceX by saying `!spx`.'
+  end
+
   command(:goodbye_everyone, permission_level: 1, help_available: false) do |event|
     event.respond 'That\'s the show for this week! Thanks for listening!'
 
