@@ -68,15 +68,15 @@ rate_limiter.bucket :mentions, delay: 30
   
   end
 
-
-  message(bucket: :altitude_game) do |event| #user leveling game
-    new_xp = 15+rand(10)
-
-    if check_for_level_up(event.user.id, new_xp) && not_tom_crew?(event)
-      event << '<@' + event.user.id.to_s + '> just hit an altitude of **' + (current_level(event.user.id) + 1).to_s + ',000 km!**'
+  message do |event| #user leveling game
+    
+    if !$rate_limiter.rate_limited?(:altitude_game, event.user)
+      new_xp = 15+rand(10)
+      if check_for_level_up(event.user.id, new_xp) # && not_tom_crew?(event)
+        event << '<@' + event.user.id.to_s + '> just hit an altitude of **' + (current_level(event.user.id) + 1).to_s + ',000 km!**'
+      end
+      award_xp(event.user.id, new_xp)
     end
-
-    award_xp(event.user.id, new_xp)
   end
 
   command(:altitude, description: 'You gain random XP for every minute you\'re active in the chat. Use this command to check your current level.' ) do |event|

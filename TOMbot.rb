@@ -14,7 +14,7 @@ require_relative 'music.rb'
 
 # Save the correct values for when I'm done testing the Twitter API.
 # client = Twitter::REST::Client.new do |config|
-#   config.consumer_key        = 'EgFJvD2TP1iBF8sRQdIDoX79D'
+#   config.consumer_key        = '1Uj4GwPHJNtrTtOoEaXpNRNDm'
 #   config.consumer_secret     = configatron.twitter_consumer_secret
 #   config.access_token        = '2827032970-yz422D4giYmhx8VNnOwlAcivH8vFuGN2p8ZLUxa'
 #   config.access_token_secret = configatron.twitter_access_secret
@@ -22,20 +22,22 @@ require_relative 'music.rb'
 
 bot = Discordrb::Commands::CommandBot.new token: configatron.discord_token, client_id: 240239741784686592, prefix: '!'
 puts "------ This bot's invite URL is #{bot.invite_url}." # Make inviting the bot easy
-if        client = Twitter::REST::Client.new do |config|
-          config.consumer_key        = 'FDM3jP4rWgAwUF1B4rjXMPXMr'
-          config.consumer_secret     = configatron.twitter_consumer_secret
-          config.access_token        = '791036085048528896-9s3L7qOaCuNP5oso7vNIJJRW4cPouQW'
-          config.access_token_secret = configatron.twitter_access_secret
-          end
-  puts "------ Authenticated Twitter" + client.current_user.name
-else
-  puts "-=-=-= Twitter authentication failed!!!"
-end
+# if        client = Twitter::REST::Client.new do |config|
+#           config.consumer_key        = 'FDM3jP4rWgAwUF1B4rjXMPXMr'
+#           config.consumer_secret     = configatron.twitter_consumer_secret
+#           config.access_token        = '791036085048528896-9s3L7qOaCuNP5oso7vNIJJRW4cPouQW'
+#           config.access_token_secret = configatron.twitter_access_secret
+#           end
+#   puts "------ Authenticated Twitter" + client.current_user.name
+# else
+#   puts "-=-=-= Twitter authentication failed!!!"
+# end
 
 
 bot.set_role_permission(137953295498084363, 1) # set TOMcrew to permission 1.
-bot.bucket(:altitude_game, limit: 1, time_span: 60)
+$rate_limiter = Discordrb::Commands::SimpleRateLimiter.new # TODO: break scope and make this not global!
+$rate_limiter.bucket :altitude_game, delay: 60
+
 
 bot.include! Utilities
 bot.include! CrewTools
