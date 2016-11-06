@@ -16,13 +16,13 @@ module Utilities
     nil
   end
 
-  command(:connect, permission_level: 1, help_availble: false) do |event|
-    channel = event.user.voice_channel
-    next "You're not in any voice channel!" unless channel
-    event.bot.voice_connect(channel)
-    puts "------ Joined #{channel.name}!"
-    nil
-  end
+  # command(:connect, permission_level: 1, help_availble: false) do |event|
+  #   channel = event.user.voice_channel
+  #   next "You're not in any voice channel!" unless channel
+  #   event.bot.voice_connect(channel)
+  #   puts "------ Joined #{channel.name}!"
+  #   nil
+  # end
 
   command([:about, :info], description: 'Get more info about TOMbot.') do |event|
     event << 'Author: <@137947564317081600>'
