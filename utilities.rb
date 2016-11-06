@@ -4,7 +4,11 @@ module Utilities
 
 
   message(content: 'Ping!', description: 'Tests if the bot\'s awake') do |event|
-    event << 'Pong!'
+    event.respond 'Pong!'
+  end
+
+  command(:pring, description: 'Tests if the bot\'s awake') do |event|
+    event << '!prong'
   end
 
   command(:join, permission_level: 1, help_available: false) do |event, invite|
