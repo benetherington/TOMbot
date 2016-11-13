@@ -5,13 +5,21 @@ module Music
     next unless connect_to_voice_channel(event) # skip everything unless we're successfully connected to a voice channel
 
     event.voice.length_override = 17
+
     case track
     when 'intro'
+      event.voice.volume = 1
       event.voice.play_file('//Users/admin/Documents/TOM/Discord bot/Discord Music/Intro - Piano Wire.mp3')
     when 'questions'
+      event.voice.volume = 1
       event.voice.play_file('//Users/admin/Documents/TOM/Discord bot/Discord Music/Qs Cs and CBs - Fifteen Fifty.mp3')
     when 'outro'
+      event.voice.length_override = 14
+      event.voice.volume = 0.5
       event.voice.play_file('//Users/admin/Documents/TOM/Discord bot/Discord Music/Outro - Piano Wire.mp3')
+    when 'spacehacks'
+      event.voice.volume = 1
+      event.voice.play_file('//Users/admin/Documents/TOM/Discord bot/Discord Music/Spacehacks - Mr_Mac.wav')
     when 'stop'
       event.voice.stop_playing
     else
@@ -20,7 +28,7 @@ module Music
   end
 
   command(:volume, permission_level: 1, help_availble: false) do |event, volume|
-    event.voice.volume = volume
+    event.voice.volume = volume.to_i
   end
 
   # command(:crescendo) do |event|
@@ -31,7 +39,7 @@ module Music
   #   end
   # end
 
-  command(:stop, permission_level: 1, help_availble: false) do |event|
+  command(:stop, permission_level: 1, help_availble: false) do |event| #TODO: check and see if this just advances when multiple tracks have been played.
     event.voice.stop_playing
   end
 

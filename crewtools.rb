@@ -37,15 +37,12 @@ module CrewTools
 
     if get_transaction('spacex_counter') < 1
       event << '🎉There were no mentions of SpaceX!🎉'
-      event << ''
       increment_transaction('spacex_meta_counter', 1)
     elsif get_transaction('spacex_counter') == 1
       event <<  'There was **one** mention of SpaceX this week.'
-      event << ''
       set_transaction 'spacex_meta_counter', 0
     else
       event <<  'There were **' + get_transaction('spacex_counter').humanize + '** mentions of SpaceX this week.'
-      event << ''
       set_transaction 'spacex_meta_counter', 0
     end
 
@@ -61,19 +58,17 @@ module CrewTools
       event <<  'There wasn\'t a single title suggestion. Guess you\'re on your own this week, Ben.'
     elsif get_transaction('titles').length > 1
       event << 'There were **' + get_transaction('titles').length.humanize + '** title suggestions:'
-      event << ''
       get_transaction('titles').each {|t| event << t}
     else
       event << 'There was **just one** title suggestion:'
-      event << ''
-      event << get_transaction('titles')
+      event << get_transaction('titles').first
     end
 
     set_transaction 'spacex_counter', 0 #reset for next show
     set_transaction 'titles', []
 
     #TODO: disconnect from server.
-    exit
+    
   end
 
 private

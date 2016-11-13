@@ -5,7 +5,7 @@ require 'configatron'
 require 'yaml/store'
 require 'humanize'
 
-require_relative 'config.rb'
+require_relative 'SECRET/config.rb'
 require_relative 'utilities.rb'
 require_relative 'crewtools.rb'
 require_relative 'audiencetoys.rb'
